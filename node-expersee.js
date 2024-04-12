@@ -1,4 +1,5 @@
 const express = require("express");
+const Joi = require("joi");
 
 const app = express();
 app.use(express.json());
@@ -8,6 +9,9 @@ const courses = [
   { id: 3, name: "course3" },
   { id: 4, name: "course4" },
 ];
+const schema = Joi.object({
+  name: Joi.string().min(3).required(),
+});
 
 app.get("/", (req, res) => {
   res.send("Hello worled");
@@ -27,13 +31,55 @@ app.post("/api/coureses/", (req, res) => {
     id: courses.length + 1,
     name: req.body.name,
   };
-  if (!req.body.name || req.name.length < 3) {
-    res.status(404).send("band request");
+  const { error } = validation(corse);
+  if (error) {
+    res.status(404).send(error.message);
     return;
   }
+
   courses.push(corse);
   res.send(corse);
 });
+
+app.put("/api/courses/:id", (req, res) => {
+  const course = courses.filter((c) => c.id === parseInt(req.params.id));
+  if (!course) {
+    res.status(404).send("No corse with the given id");
+    return;
+  }
+
+  const { error, value } = validation({
+    id: parseInt(req.params.id),
+    name: req.body.name,
+  });
+  if (error) {
+    res.status(404).send(error);
+    return;
+  }
+  course.name = value.name;
+  res.send(course);
+});
+
+app.delete('api/courses/:id', (req, res)=>{
+    const course = courses.find(c=>c.id === parseInt(req.params.id))
+    if(!course){
+        res.status(404).send('No course with the given ID is found')
+        return
+    }
+    const newcors = courses.filter(c=>c.id !== parseInt(req.params.id))
+    courses = newcors;
+    res.send(course)
+})
+
+
+function validation(corse) {
+  const schema = Joi.object({
+    id: Joi.number(),
+    name: Joi.string().min(3).required(),
+  });
+
+  return schema.validate(corse);
+}
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`listing on port ${port} ..`));
