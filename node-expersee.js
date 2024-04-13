@@ -1,17 +1,21 @@
 const express = require("express");
 const Joi = require("joi");
+const logger = require('./loger.js')
 
-const app = express();
-app.use(express.json());
+
 const courses = [
   { id: 1, name: "course1" },
   { id: 2, name: "course2" },
   { id: 3, name: "course3" },
   { id: 4, name: "course4" },
 ];
-const schema = Joi.object({
-  name: Joi.string().min(3).required(),
-});
+
+const app = express();
+app.use(express.json());
+
+
+app.use(logger.loger)
+app.use(logger.auth)
 
 app.get("/", (req, res) => {
   res.send("Hello worled");
