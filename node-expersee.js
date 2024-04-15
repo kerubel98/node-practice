@@ -18,7 +18,7 @@ app.use(logger.loger)
 app.use(logger.auth)
 
 app.get("/", (req, res) => {
-  res.send("Hello worled");
+  res.send("Hello world");
 });
 app.get("/api/coures", (req, res) => {
   res.send(courses);
