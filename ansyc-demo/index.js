@@ -1,3 +1,7 @@
+require('dotenv').config()
+console.log(process.env.DB_URL)
+
+
 const getUbe = [
   { id: 1, username: "mosh" },
   { id: 2, username: "kirubel" },
